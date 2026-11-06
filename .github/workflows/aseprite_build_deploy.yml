@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           curl -f -o Aseprite-source.zip -L "$ASEPRITE_SOURCE_URL"
-          7z x Aseprite-source.zip -daseprite
+          7z x Aseprite-source.zip -oaseprite
           mkdir -p aseprite/build
 
       - name: Setting Visual Studio build environment
