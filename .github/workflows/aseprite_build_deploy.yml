@@ -11,6 +11,7 @@ env:
   LATEST_TAG: v1.3.18.6
   ASEPRITE_SOURCE_URL: https://github.com/aseprite/aseprite/releases/download/v1.3.18.6/Aseprite-v1.3.18.6-Source.zip
   SKIA_URL: https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Windows-Release-x64.zip
+  # ПРОВЕРЬТЕ: тег не подтверждён. Должен соответствовать версии libjpeg-turbo в skia/DEPS для m124
   LIBJPEG_TAG: "3.0.4"
 
 jobs:
@@ -29,34 +30,36 @@ jobs:
         if: steps.skia-cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
+          set -e
           curl -f -o Skia-Windows-Release-x64.zip -L "$SKIA_URL"
           7z x Skia-Windows-Release-x64.zip -oskia
 
       - name: Inspect Skia archive
         shell: bash
         run: |
-          7z l Skia-Windows-Release-x64.zip | head -n 40
-          echo "---"
           ls skia
-          echo "---"
-          find skia -maxdepth 3 -type d | head -n 60
+          echo "--- out/Release-x64 ---"
+          ls skia/out/Release-x64 || true
           echo "--- jpeg files ---"
-          find skia -iname "*jpeg*" | head -n 30
+          find skia -iname "*jpeg*" | head -n 30 || true
 
       - name: Get libjpeg-turbo sources if missing
         shell: bash
         run: |
+          set -e
           if [ ! -d skia/third_party/externals/libjpeg-turbo ]; then
             mkdir -p skia/third_party/externals
             git clone --depth 1 --branch "$LIBJPEG_TAG" \
               https://github.com/libjpeg-turbo/libjpeg-turbo.git \
               skia/third_party/externals/libjpeg-turbo
           fi
-          ls skia/third_party/externals/libjpeg-turbo | head -n 20
+          echo "--- libjpeg-turbo contents ---"
+          ls -la skia/third_party/externals/libjpeg-turbo | head -n 40
 
       - name: Download Aseprite source
         shell: bash
         run: |
+          set -e
           curl -f -o Aseprite-source.zip -L "$ASEPRITE_SOURCE_URL"
           7z x Aseprite-source.zip -oaseprite
           mkdir -p aseprite/build
