@@ -38,7 +38,6 @@ jobs:
           set -e
           SKIA_ABS="$(cygpath -m "$PWD/skia")"
           echo "SKIA_ABS=$SKIA_ABS" >> "$GITHUB_ENV"
-          echo "SKIA_ABS = $SKIA_ABS"
 
           LIB="$(find skia/out/Release-x64 -iname '*jpeg*.lib' | head -n 1)"
           if [ -z "$LIB" ]; then
@@ -84,10 +83,24 @@ jobs:
         shell: bash
         run: 7z a -tzip "Aseprite-${LATEST_TAG}-Windows.zip" *
 
+      - name: Check release zip exists
+        shell: bash
+        run: |
+          set -e
+          ZIP="aseprite/build/bin/Aseprite-${LATEST_TAG}-Windows.zip"
+          ls -la aseprite/build/bin | head -n 40
+          test -f "$ZIP" || { echo "ERROR: $ZIP not found"; exit 1; }
+          ls -la "$ZIP"
+
       - name: Create GitHub release and upload asset
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.LATEST_TAG }}-${{ github.run_number }}
-          name:
+          name: Release Aseprite ${{ env.LATEST_TAG }} (Build #${{ github.run_number }})
+          body: Manual build of Aseprite ${{ env.LATEST_TAG }}
+          draft: false
+          prerelease: false
+          files: aseprite/build/bin/Aseprite-${{ env.LATEST_TAG }}-Windows.zip
+          fail_on_unmatched_files: true
