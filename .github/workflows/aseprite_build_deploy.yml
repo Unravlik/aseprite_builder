@@ -10,7 +10,7 @@ env:
   BUILD_TYPE: Release
   LATEST_TAG: v1.3.18.6
   ASEPRITE_SOURCE_URL: https://github.com/aseprite/aseprite/releases/download/v1.3.18.6/Aseprite-v1.3.18.6-Source.zip
-  SKIA_URL: https://github.com/aseprite/skia/releases/download/m102-861e4743af/Skia-Windows-Release-x64.zip
+  SKIA_URL: https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Windows-Release-x64.zip
 
 jobs:
   build-aseprite:
@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: skia
-          key: skia-windows-v2-cache
+          key: skia-windows-m124-cache
 
       - name: Download Skia if not in cache
         if: steps.skia-cache.outputs.cache-hit != 'true'
