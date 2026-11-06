@@ -31,6 +31,15 @@ jobs:
           curl -f -o Skia-Windows-Release-x64.zip -L "$SKIA_URL"
           7z x Skia-Windows-Release-x64.zip -oskia
 
+      - name: Inspect Skia archive
+        shell: bash
+        run: |
+          7z l Skia-Windows-Release-x64.zip | head -n 40
+          echo "---"
+          ls skia
+          echo "---"
+          find skia -maxdepth 3 -type d | head -n 60
+
       - name: Download Aseprite source
         shell: bash
         run: |
