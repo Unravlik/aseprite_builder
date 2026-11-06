@@ -73,6 +73,21 @@ jobs:
         shell: bash
         run: rm -f gen modp_b64_gen gen.exe gen.exe.manifest modp_b64_gen.exe modp_b64_gen.exe.manifest
 
+      - name: Copy OpenSSL runtime DLLs
+        shell: bash
+        run: |
+          set -e
+          BIN="aseprite/build/bin"
+          for DLL in libcrypto-3-x64.dll libssl-3-x64.dll; do
+            FOUND="$(find "/c/Program Files" "/c/Program Files (x86)" "/c/Strawberry" "/c/ProgramData/chocolatey" -iname "$DLL" 2>/dev/null | head -n 1 || true)"
+            if [ -z "$FOUND" ]; then
+              echo "ERROR: $DLL not found on runner"
+              exit 1
+            fi
+            cp "$FOUND" "$BIN/"
+            echo "Copied $FOUND"
+          done
+
       - name: Make portable zip
         working-directory: aseprite/build/bin
         shell: bash
