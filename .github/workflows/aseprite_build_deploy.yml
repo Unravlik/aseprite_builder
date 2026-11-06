@@ -44,11 +44,11 @@ jobs:
       - name: Download Skia if not in cache
         if: steps.skia-cache.outputs.cache-hit != 'true'
         run: |
-          curl -o Skia-Windows-Release-X64.zip -L https://github.com
+          curl -f -o Skia-Windows-Release-X64.zip -L https://github.com
           unzip Skia-Windows-Release-X64.zip -d skia
       - name: Download Aseprite release
         run: |
-          curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
+          curl -f -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
           unzip Aseprite-source.zip -d aseprite
           mkdir -p aseprite/build
       - name: Setting Visual Studio build environment
