@@ -40,16 +40,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: skia
-          key: skia-windows-cache
+          key: skia-windows-v2-cache
       - name: Download Skia if not in cache
         if: steps.skia-cache.outputs.cache-hit != 'true'
         run: |
           curl -f -o Skia-Windows-Release-X64.zip -L https://github.com
-          unzip Skia-Windows-Release-X64.zip -d skia
+          7z x Skia-Windows-Release-X64.zip -oskia
       - name: Download Aseprite release
         run: |
           curl -f -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
-          unzip Aseprite-source.zip -d aseprite
+          7z x Aseprite-source.zip -daseprite
           mkdir -p aseprite/build
       - name: Setting Visual Studio build environment
         uses: ilammy/msvc-dev-cmd@v1
