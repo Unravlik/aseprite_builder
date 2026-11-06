@@ -40,21 +40,14 @@ jobs:
           echo "SKIA_ABS=$SKIA_ABS" >> "$GITHUB_ENV"
           echo "SKIA_ABS = $SKIA_ABS"
 
-          echo "--- out/Release-x64 ---"
-          ls skia/out/Release-x64 || true
-
-          echo "--- jpeg libraries ---"
-          find skia/out -iname "*jpeg*.lib" || true
-
-          LIB="$(find skia/out/Release-x64 -iname "jpeg*.lib" -o -iname "turbojpeg*.lib" | head -n 1)"
-          if [ -n "$LIB" ]; then
-            LIB_ABS="$(cygpath -m "$PWD/$LIB")"
-            echo "LIBJPEG_LIB=$LIB_ABS" >> "$GITHUB_ENV"
-            echo "Found: $LIB_ABS"
-          else
-            echo "LIBJPEG_LIB=" >> "$GITHUB_ENV"
-            echo "WARNING: jpeg library not found in skia/out/Release-x64"
+          LIB="$(find skia/out/Release-x64 -iname '*jpeg*.lib' | head -n 1)"
+          if [ -z "$LIB" ]; then
+            echo "ERROR: jpeg library not found in skia/out/Release-x64"
+            exit 1
           fi
+          LIB_ABS="$(cygpath -m "$PWD/$LIB")"
+          echo "LIBJPEG_LIB=$LIB_ABS" >> "$GITHUB_ENV"
+          echo "Found: $LIB_ABS"
 
       - name: Download Aseprite source
         shell: bash
@@ -97,8 +90,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.LATEST_TAG }}-${{ github.run_number }}
-          name: Release Aseprite ${{ env.LATEST_TAG }} (Build #${{ github.run_number }})
-          body: Manual build of Aseprite ${{ env.LATEST_TAG }}
-          draft: false
-          prerelease: false
-          files: aseprite/build/bin/Aseprite-${{ env.LATEST_TAG }}-Windows.zip
+          name:
